@@ -70,7 +70,6 @@ function App() {
     getCounters();
   };
 
-  console.log(counters);
   return (
     <div className="App">
       <h2>Counter app</h2>
