@@ -1,69 +1,80 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import Counter from "./components/Counter";
 import "./App.css";
 import AddCounter from "./components/AddCounter";
-import { v4 as uuidv4 } from "uuid";
 import db from "./connectDB";
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  doc,
+  setDoc,
+  deleteDoc,
+} from "firebase/firestore";
 
 function App() {
-
   const initialCounter = {
-    id: uuidv4(),
+    id: "",
     value: 0,
     buttons: [1, 2, 3],
   };
 
   const [counters, setCounters] = useState([initialCounter]);
 
+  const getCounters = () => {
+    (async () => {
+      const snapshot = await getDocs(collection(db, "counters"));
+      const docList = JSON.parse(
+        JSON.stringify(
+          snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        )
+      );
+      setCounters(docList);
+    })();
+  };
+
   useEffect(() => {
-    const getTasks = async () => {
-      const countersCollection = collection(db, "counters");
-      const countersSnapshot = await getDocs(countersCollection);
-      const countersList = JSON.parse(JSON.stringify(countersSnapshot.docs.map(doc => doc.data())));
-      setCounters(countersList);
-    };
-    getTasks();
-  }, []);      // make firebase writable
+    getCounters();
+  }, []);
 
   const changeCounterValue = (id: string, buttonValue: number) => {
-    const newCounters = counters.map(counter =>
-      counter.id === id
-        ? { ...counter, value: counter.value + buttonValue }
-        : counter
-    );
-    setCounters(newCounters);
+    const counterToChange = counters.filter((counter) => counter.id === id)[0];
+    const newCounter = {
+      value: counterToChange.value + buttonValue,
+      buttons: counterToChange.buttons,
+    };
+    (async () => await setDoc(doc(db, "counters", id), newCounter))();
+    getCounters();
   };
 
   const addCounter = () => {
     const newCounter = {
-      ...initialCounter,
-      id: uuidv4(),
+      value: initialCounter.value,
+      buttons: initialCounter.buttons,
     };
-    setCounters([...counters, newCounter]);
+    (async () => await addDoc(collection(db, "counters"), newCounter))();
+    getCounters();
   };
 
   const resetCounter = (id: string) => {
-    const newCounters = [...counters].map(counter =>
-      counter.id === id
-        ? {...counter, value: initialCounter.value}
-        : counter
-    );
-    setCounters(newCounters);
+    const newCounter = {
+      value: initialCounter.value,
+      buttons: initialCounter.buttons,
+    };
+    (async () => await setDoc(doc(db, "counters", id), newCounter))();
+    getCounters();
   };
 
   const deleteCounter = (id: string) => {
-    const newCounters = [...counters].filter(counter => counter.id !== id);
-    setCounters(newCounters);
+    (async () => await deleteDoc(doc(db, "counters", id)))();
+    getCounters();
   };
 
-
+  console.log(counters);
   return (
     <div className="App">
       <h2>Counter app</h2>
-      <AddCounter
-        addCounter={addCounter}
-      />
+      <AddCounter addCounter={addCounter} />
       <div>
         {counters.map((counter) => (
           <Counter

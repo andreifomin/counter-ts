@@ -1,6 +1,6 @@
-import Button from "./Button";
-import ResetCounter from "./ResetCounter";
-import DeleteCounter from "./DeleteCounter";
+import ButtonChangeValue from "./ButtonChangeValue";
+import ButtonResetCounter from "./ButtonResetCounter";
+import ButtonDeleteCounter from "./ButtonDeleteCounter";
 
 interface ICounter {
   id: string;
@@ -16,30 +16,31 @@ interface IProps {
 }
 
 function Counter(props: IProps) {
+  // console.log(props)
   return (
     <div style={{ marginTop: 10 }}>
-      {[...props.counter.buttons].reverse().map((button, index) => (
-        <Button
+      {[...props.counter.buttons].reverse().map((buttonValue, index) => (
+        <ButtonChangeValue
           key={index}
-          button={-button}
+          buttonValue={-buttonValue}
           id={props.counter.id}
           changeCounterValue={props.changeCounterValue}
         />
       ))}{" "}
       <b>{props.counter.value}</b>{" "}
-      {props.counter.buttons.map((button, index) => (
-        <Button
+      {props.counter.buttons.map((buttonValue, index) => (
+        <ButtonChangeValue
           key={index}
-          button={button}
+          buttonValue={buttonValue}
           id={props.counter.id}
           changeCounterValue={props.changeCounterValue}
         />
       ))}{" "}
-      <ResetCounter
+      <ButtonResetCounter
         id={props.counter.id}
         resetCounter={props.resetCounter}
       />{" "}
-      <DeleteCounter
+      <ButtonDeleteCounter
         id={props.counter.id}
         deleteCounter={props.deleteCounter}
       />

@@ -3,7 +3,7 @@ interface IProps {
   deleteCounter: (id: string) => void;
 }
 
-function DeleteCounter(props: IProps) {
+function ButtonDeleteCounter(props: IProps) {
   return (
     <button onClick={() => props.deleteCounter(props.id)}>
       Delete
@@ -11,4 +11,4 @@ function DeleteCounter(props: IProps) {
   );
 }
 
-export default DeleteCounter;
+export default ButtonDeleteCounter;

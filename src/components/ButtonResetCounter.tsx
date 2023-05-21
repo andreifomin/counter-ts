@@ -3,7 +3,7 @@ interface IProps {
   resetCounter: (id: string) => void;
 }
 
-function ResetCounter(props: IProps) {
+function ButtonResetCounter(props: IProps) {
   return (
     <button onClick={() => props.resetCounter(props.id)}>
       Reset
@@ -11,4 +11,4 @@ function ResetCounter(props: IProps) {
   );
 }
 
-export default ResetCounter;
+export default ButtonResetCounter;
